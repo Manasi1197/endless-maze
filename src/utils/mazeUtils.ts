@@ -24,14 +24,6 @@ const puzzleTemplates = [
   {
     template: "Logic: “What is so fragile that saying its name breaks it?”",
     answer: "silence",
-  },
-  {
-    template: "Choice: “Left or Right? Only one is correct in this endless labyrinth.”",
-    answer: "left,right" // accept either
-  },
-  {
-    template: "Story: “You're given two doors: one labeled Past, one Future. Which do you choose?”",
-    answer: "past,future"
   }
 ];
 
