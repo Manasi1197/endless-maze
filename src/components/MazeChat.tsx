@@ -45,19 +45,25 @@ const MazeChat = ({
   return (
     <div className={cn(
       "h-full flex flex-col pt-3 sm:pt-8 pb-3 sm:pb-8 px-1 sm:px-6",
-      isMobile && "pb-[76px] sm:pb-8" // Add space for button if showing
+      isMobile && "pb-[94px] sm:pb-8" // Extra for button
     )}>
       {/* Chat header */}
       <div className={cn(
         "flex items-center mb-2 sm:mb-4 select-none",
-        isMobile ? "mb-1" : "mb-2 sm:mb-4"
+        isMobile ? "justify-between mb-3" : ""
       )}>
-        <span className="bg-indigo-900 text-indigo-300 p-1.5 sm:p-2 rounded-full mr-1 sm:mr-3 shadow-md">
+        <span className="bg-indigo-900 text-indigo-300 p-1.5 sm:p-2 rounded-full mr-2 sm:mr-3 shadow-md">
           <Puzzle size={17} className="sm:size-[28px]" />
         </span>
-        <span className="font-semibold text-indigo-200 text-base sm:text-xl drop-shadow-sm">
-          Maze Guide
-        </span>
+        {isMobile && level !== undefined ? (
+          <span className="font-semibold text-fuchsia-300 text-base sm:text-lg drop-shadow-sm ml-auto">
+            Level {level}
+          </span>
+        ) : (
+          <span className="font-semibold text-indigo-200 text-base sm:text-xl drop-shadow-sm">
+            Maze Guide
+          </span>
+        )}
       </div>
       {/* Messages */}
       <div
@@ -126,31 +132,34 @@ const MazeChat = ({
       {/* Mobile progression buttons at the bottom */}
       {isMobile && (roomSolved || levelComplete) && (
         <div
-          className="fixed bottom-2 left-0 w-full flex justify-center items-end z-50 pointer-events-none"
+          className="fixed bottom-0 left-0 w-full flex justify-center items-end z-50 pointer-events-none"
         >
           <div className={cn(
-            "pointer-events-auto px-2",
-            // animate and spacing mobile
+            "pointer-events-auto pb-3 w-full flex flex-col items-center",
           )}>
             {roomSolved && !levelComplete && (
               <button
-                className="w-full max-w-xs mx-auto animate-fade-in mb-0 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                className="w-[94vw] max-w-xs animate-fade-in px-4 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
                 onClick={advanceRoom}
+                style={{ marginBottom: 0 }}
               >
                 Next Room &rarr;
               </button>
             )}
             {levelComplete && (
-              <div className="flex flex-col items-center justify-center animate-fade-in mt-1 drop-shadow-lg">
+              <div className="flex flex-col items-center justify-center animate-fade-in drop-shadow-lg w-[94vw] max-w-xs bg-fuchsia-950/80 p-3 rounded-2xl mb-2 shadow-xl">
                 <span className="text-lg drop-shadow-glow font-extrabold text-yellow-300 animate-pulse mb-1">
                   🎉 Congratulations!
                 </span>
-                <span className="text-sm text-white/80 mb-2 font-semibold">
-                  You completed Level {level}
-                </span>
+                {level !== undefined && (
+                  <span className="text-sm text-white/80 mb-2 font-semibold">
+                    You completed Level {level}
+                  </span>
+                )}
                 <button
-                  className="w-full max-w-xs animate-fade-in px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                  className="w-full animate-fade-in px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-2xl transition-all hover:scale-105"
                   onClick={advanceLevel}
+                  style={{ marginBottom: 0 }}
                 >
                   Next Level &darr;
                 </button>
