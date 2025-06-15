@@ -14,6 +14,10 @@ const MazeGameLayout = () => {
           progress={maze.progress}
           total={maze.total}
           level={maze.level}
+          roomSolved={maze.roomSolved}
+          advanceRoom={maze.advanceRoom}
+          levelComplete={maze.levelComplete}
+          advanceLevel={maze.advanceLevel}
         />
       </div>
       <div className="flex flex-col justify-end h-screen max-h-screen p-0 bg-gray-900/90">
