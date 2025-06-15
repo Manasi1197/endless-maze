@@ -1,9 +1,11 @@
+
 import { Button } from "@/components/ui/button";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import { useUserProgress } from "@/hooks/useUserProgress";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "@/components/ui/sonner";
 
 export default function Index() {
   const { user, initialized } = useAuthUser();
@@ -11,11 +13,34 @@ export default function Index() {
   const navigate = useNavigate();
   const [loggingOut, setLoggingOut] = useState(false);
 
+  // Track when user changes, for console debugging
+  useEffect(() => {
+    console.log("[Index] User changed:", user);
+    if (!user && initialized) {
+      setLoggingOut(false);
+      // Optionally, could navigate("/auth");
+    }
+  }, [user, initialized]);
+
   const handleLogout = async () => {
     setLoggingOut(true);
-    await supabase.auth.signOut();
-    setLoggingOut(false);
-    // Don't navigate immediately; let the user state update and show the login button.
+    console.log("[Index] Logging out, user:", user);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error("[Index] Logout error:", error);
+        toast.error("Logout failed: " + error.message);
+        setLoggingOut(false);
+      } else {
+        toast.success("Logged out");
+        // We wait for the auth state to change, and UI will re-render
+        // setLoggingOut(false) will be called in useEffect above
+      }
+    } catch (err) {
+      console.error("[Index] Logout exception:", err);
+      toast.error("Unexpected logout error");
+      setLoggingOut(false); // fallback
+    }
   };
 
   return (

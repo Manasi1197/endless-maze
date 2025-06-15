@@ -12,12 +12,14 @@ export function useAuthUser() {
   useEffect(() => {
     // Subscribe to auth state changes FIRST
     const { data: listener } = supabase.auth.onAuthStateChange((_event, sess) => {
+      console.log("[useAuthUser] Auth state changed:", _event, sess);
       setUser(sess?.user ?? null);
       setSession(sess ?? null);
       setInitialized(true);
     });
     // Check for initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      console.log("[useAuthUser] Initial session checked:", session);
       setUser(session?.user ?? null);
       setSession(session ?? null);
       setInitialized(true);
