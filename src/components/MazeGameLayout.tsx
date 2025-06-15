@@ -3,16 +3,20 @@ import MazeRoom from "./MazeRoom";
 import MazeChat from "./MazeChat";
 import { useMazeGame } from "../hooks/useMazeGame";
 
-// Layout: Two columns, left = room view, right = chat/puzzle
 const MazeGameLayout = () => {
   const maze = useMazeGame();
 
   return (
-    <div className="min-h-screen w-full grid grid-cols-2 gap-0 bg-gradient-to-br from-indigo-950 via-gray-900 to-indigo-800">
-      <div className="flex flex-col justify-between items-stretch p-10 border-r border-indigo-800">
-        <MazeRoom room={maze.room} progress={maze.progress} total={maze.total} />
+    <div className="relative min-h-screen w-full grid grid-cols-1 md:grid-cols-2 gap-0">
+      <div className="relative flex flex-col justify-between items-stretch p-0 border-r border-indigo-900 overflow-hidden">
+        <MazeRoom
+          room={maze.room}
+          progress={maze.progress}
+          total={maze.total}
+          level={maze.level}
+        />
       </div>
-      <div className="flex flex-col justify-end h-screen max-h-screen p-0">
+      <div className="flex flex-col justify-end h-screen max-h-screen p-0 bg-gray-900/90">
         <MazeChat
           chat={maze.chat}
           userInput={maze.userInput}
