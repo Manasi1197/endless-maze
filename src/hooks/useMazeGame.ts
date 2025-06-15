@@ -1,3 +1,4 @@
+
 import { useState, useCallback, useEffect } from "react";
 import { useMazeRooms } from "./useMazeRooms";
 import { isCorrectAnswer, normalizeAnswer } from "../utils/mazeAnswerUtils";
@@ -26,20 +27,35 @@ export function useMazeGame() {
   const [isLoading, setIsLoading] = useState(false);
   const [guideTyping, setGuideTyping] = useState(false);
   const [playerStyle, setPlayerStyle] = useState<null | "playful" | "grumpy" | "clever">(null);
+  const [hasShownFirstRoom, setHasShownFirstRoom] = useState(false);
 
   // When room or level changes, always show the appropriate messages
   useEffect(() => {
-    // Fresh start or after stepping to a new room: show intro + puzzle
-    if (roomIdx === 0 && level === 1) return; // Only first message on first mount
-    setTimeout(() => {
-      setChat([
-        { role: "guide", content: `Stepping into Room ${room.id}...` },
-        { role: "guide", content: `Level ${level} - Room ${room.id}` },
-        { role: "guide", content: room.puzzle },
-      ]);
-    }, 400);
+    // For the very first room, show it after the welcome message
+    if (roomIdx === 0 && level === 1 && !hasShownFirstRoom) {
+      setTimeout(() => {
+        setChat(prev => [
+          ...prev,
+          { role: "guide", content: `Level ${level} - Room ${room.id}` },
+          { role: "guide", content: room.puzzle },
+        ]);
+        setHasShownFirstRoom(true);
+      }, 800);
+      return;
+    }
+    
+    // For all other room transitions
+    if (hasShownFirstRoom) {
+      setTimeout(() => {
+        setChat([
+          { role: "guide", content: `Stepping into Room ${room.id}...` },
+          { role: "guide", content: `Level ${level} - Room ${room.id}` },
+          { role: "guide", content: room.puzzle },
+        ]);
+      }, 400);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomIdx, rooms, level]);
+  }, [roomIdx, rooms, level, room, hasShownFirstRoom]);
 
   const sendMessage = useCallback(
     async (msg: string) => {
