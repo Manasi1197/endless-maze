@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { useAuthUser } from "@/hooks/useAuthUser";
 import { useUserProgress } from "@/hooks/useUserProgress";
@@ -15,8 +14,8 @@ export default function Index() {
   const handleLogout = async () => {
     setLoggingOut(true);
     await supabase.auth.signOut();
-    navigate("/auth");
     setLoggingOut(false);
+    // Don't navigate immediately; let the user state update and show the login button.
   };
 
   return (
