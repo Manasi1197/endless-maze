@@ -42,26 +42,26 @@ const MazeRoom = ({
 
   return (
     <div
-      className={`flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700`}
+      className={`flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700 px-2 sm:px-0`}
     >
       <div
         className={`absolute inset-0 z-0 bg-gradient-to-br ${theme.gradient} animate-fade-in`}
         style={{ opacity: 0.95, filter: "blur(1.5px)" }}
       />
       <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
-        <div className="flex items-center mb-8 mt-2 drop-shadow-lg">
-          <span className={`p-4 rounded-full mr-3 border-2 ${theme.accent} bg-white/20 shadow-lg`}>
-            <Puzzle size={44} className="text-indigo-300" />
+        <div className="flex items-center mb-6 sm:mb-8 mt-2 drop-shadow-lg">
+          <span className={`p-3 sm:p-4 rounded-full mr-2 sm:mr-3 border-2 ${theme.accent} bg-white/20 shadow-lg`}>
+            <Puzzle size={34} className="text-indigo-300 sm:size-[44px]" />
           </span>
-          <span className="text-4xl font-bold text-white/90 tracking-wide drop-shadow-md">
+          <span className="text-2xl sm:text-4xl font-bold text-white/90 tracking-wide drop-shadow-md">
             Level {level}
-            <span className="ml-6 text-xl text-white/60 font-semibold">
+            <span className="ml-4 sm:ml-6 text-base sm:text-xl text-white/60 font-semibold">
               Room {(room.id - 1) % 3 + 1}
             </span>
           </span>
         </div>
-        <div className={`w-full max-w-lg mb-8 text-white/80 text-center text-lg font-medium p-7 rounded-2xl border-2 transition-all duration-500 ${theme.card}`}>
-          <div className="mb-1 text-2xl font-bold tracking-wider text-white mb-2">
+        <div className={`w-full max-w-md sm:max-w-lg mb-6 sm:mb-8 text-white/80 text-center text-base sm:text-lg font-medium p-4 sm:p-7 rounded-2xl border-2 transition-all duration-500 ${theme.card}`}>
+          <div className="mb-1 text-xl sm:text-2xl font-bold tracking-wider text-white mb-2">
             {room.title}
           </div>
           {room.description}
@@ -69,7 +69,7 @@ const MazeRoom = ({
         {/* Button logic for progressing */}
         {roomSolved && !levelComplete && (
           <button
-            className="animate-fade-in mb-6 px-6 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl text-lg font-bold shadow-lg transition-all hover:scale-105"
+            className="animate-fade-in mb-5 sm:mb-6 px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl text-base sm:text-lg font-bold shadow-lg transition-all hover:scale-105"
             onClick={advanceRoom}
           >
             Next Room &rarr;
@@ -77,19 +77,19 @@ const MazeRoom = ({
         )}
         {levelComplete && (
           <div
-            className="flex flex-col items-center justify-center animate-fade-in mt-6 mb-10" // <-- Increased bottom margin
+            className="flex flex-col items-center justify-center animate-fade-in mt-6 mb-8 sm:mb-10"
             ref={confettiRef}
           >
             <div className="relative">
-              <span className="text-5xl drop-shadow-glow font-extrabold text-yellow-300 animate-pulse">
+              <span className="text-3xl sm:text-5xl drop-shadow-glow font-extrabold text-yellow-300 animate-pulse">
                 🎉 Congratulations!
               </span>
             </div>
-            <div className="text-xl text-white/80 mt-4 font-semibold">
+            <div className="text-lg sm:text-xl text-white/80 mt-4 font-semibold">
               You have completed Level {level}.
             </div>
             <button
-              className="animate-fade-in mt-7 px-5 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-xl transition-all hover:scale-105"
+              className="animate-fade-in mt-6 sm:mt-7 px-5 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-xl transition-all hover:scale-105"
               onClick={advanceLevel}
             >
               Next Level &darr;
@@ -97,7 +97,7 @@ const MazeRoom = ({
           </div>
         )}
         <div className="w-full flex flex-col items-center gap-2 mt-auto">
-          <div className={`w-64 ${theme.accent} rounded-full h-3 mb-2 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
+          <div className={`w-full max-w-[240px] sm:w-64 ${theme.accent} rounded-full h-3 mb-2 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
             <div
               className="h-3 bg-white/60 rounded-full transition-all duration-300"
               style={{ width: `${(progress / total) * 100}%` }}
