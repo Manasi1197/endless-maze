@@ -41,7 +41,7 @@ export default function AuthPage() {
       setLoading(false);
     } else {
       // Sign up mode
-      const redirectUrl = `${window.location.origin}/`; // Important for email confirmation
+      const redirectUrl = `${window.location.origin}/`; // For email confirmation
       const { error } = await supabase.auth.signUp({
         email,
         password: pw,
@@ -57,8 +57,14 @@ export default function AuthPage() {
     }
   };
 
+  // Guest play handler
+  const handleGuestPlay = () => {
+    toast("Playing as guest. Progress will not be saved.");
+    navigate("/");
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 to-cyan-800 px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-900 to-cyan-800 px-4">
       <form
         onSubmit={handleAuth}
         className="w-full max-w-md rounded-xl bg-white/10 border border-cyan-400 p-8 shadow-lg flex flex-col gap-5"
@@ -98,6 +104,20 @@ export default function AuthPage() {
             : "Already have an account? Sign In"}
         </button>
         {err && <div className="bg-red-200/40 rounded p-2 text-red-800 text-sm">{err}</div>}
+        <div className="mt-6 flex flex-col items-center">
+          <div className="text-white/80 text-xs mb-2">— or —</div>
+          <Button
+            variant="outline"
+            className="w-full font-semibold bg-white/80 hover:bg-white/90 mt-1 text-cyan-900"
+            type="button"
+            onClick={handleGuestPlay}
+          >
+            Play Now (Continue as Guest)
+          </Button>
+          <div className="text-[10px] mt-2 text-cyan-100/80 text-center">
+            You can play as a guest, but your progress will not be saved.
+          </div>
+        </div>
       </form>
     </div>
   );

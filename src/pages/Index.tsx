@@ -1,4 +1,3 @@
-
 import MazeGameLayout from "@/components/MazeGameLayout";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -63,49 +62,21 @@ export default function Index() {
               )}
             </div>
             <div className="flex gap-4">
-              <Button size="lg">Play Now</Button>
-              <Button variant="outline" size="lg">
-                Learn More
+              <Button
+                size="lg"
+                onClick={() => {
+                  // For guests: just go to maze as guest (progress isn't stored if not authenticated)
+                  navigate("/");
+                }}
+              >
+                Play Now
               </Button>
             </div>
           </div>
         </div>
       </section>
-
-      <div className="max-w-lg mx-auto mt-10 bg-white/10 rounded-xl p-6 border border-cyan-500 shadow-xl">
-        <h2 className="text-xl font-bold text-cyan-100 mb-2">Try an AI-Generated Puzzle!</h2>
-        <button
-          className="px-4 py-2 bg-cyan-600 rounded-lg text-white font-bold mb-3 disabled:opacity-60"
-          onClick={async () => {
-            setLoading(true);
-            setPuzzle(null);
-            setError(null);
-            try {
-              const res = await generatePuzzle("Give me a new riddle or logic puzzle for Maze Mind, and its answer.");
-              setPuzzle(res);
-            } catch (e: any) {
-              setError(e.message || "Failed to generate puzzle.");
-            }
-            setLoading(false);
-          }}
-          disabled={loading}
-        >
-          {loading ? "Generating..." : "Generate Puzzle"}
-        </button>
-        {error && <div className="text-red-400 mt-2">{error}</div>}
-        {puzzle && (
-          <div className="mt-4">
-            <div className="font-semibold text-cyan-200 mb-1">Riddle:</div>
-            <div className="bg-cyan-900 rounded p-3 text-cyan-100">{puzzle.riddle}</div>
-            <div className="font-semibold text-lime-300 mt-3">Answer:</div>
-            <div className="bg-lime-900 rounded p-3 text-lime-200">{puzzle.answer}</div>
-          </div>
-        )}
-      </div>
-
+      {/* MazeGameLayout always shown */}
       <MazeGameLayout />
-
-      {/* Optionally add a link to /auth if user ever gets logged out */}
     </div>
   );
 }
