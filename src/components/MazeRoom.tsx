@@ -85,9 +85,11 @@ const MazeRoom = ({
                 🎉 Congratulations!
               </span>
             </div>
-            <div className="text-xl text-white/80 mt-4 font-semibold">You have completed Level {level}.</div>
+            <div className="text-xl text-white/80 mt-4 font-semibold">
+              You have completed Level {level}.
+            </div>
             <button
-              className="animate-fade-in mt-7 px-7 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-xl font-bold shadow-xl transition-all hover:scale-105"
+              className="animate-fade-in mt-7 px-5 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-xl transition-all hover:scale-105"
               onClick={advanceLevel}
             >
               Next Level &darr;
