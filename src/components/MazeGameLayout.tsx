@@ -4,10 +4,38 @@ import MazeChat from "./MazeChat";
 import { useMazeGame } from "../hooks/useMazeGame";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { useAuthUser } from "@/hooks/useAuthUser";
+import { useUserProgress } from "@/hooks/useUserProgress";
+import { useEffect, useRef } from "react";
 
 const MazeGameLayout = () => {
   const maze = useMazeGame();
   const navigate = useNavigate();
+
+  // New: Get current logged-in user
+  const { user } = useAuthUser();
+  const { data: userProgress, updateLevel } = useUserProgress(user?.id);
+
+  // Track previous level complete state to trigger only ONCE per completion
+  const prevLevelComplete = useRef<boolean>(false);
+
+  useEffect(() => {
+    // Save to Supabase only when a level has just become complete and user is logged in
+    if (
+      user &&
+      maze.levelComplete &&
+      !prevLevelComplete.current && // only trigger when levelComplete changes to true
+      (userProgress?.level_reached == null || maze.level > userProgress.level_reached)
+    ) {
+      // No UI feedback requested, just call updateLevel
+      updateLevel(maze.level).catch(() => {
+        // silently ignore errors, per user's requirement
+      });
+    }
+    prevLevelComplete.current = maze.levelComplete;
+    // we want to react to maze.levelComplete, maze.level, user, userProgress
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [maze.levelComplete, maze.level, user, userProgress]);
 
   return (
     <div className="relative min-h-screen w-full grid grid-cols-1 md:grid-cols-2 gap-0">
