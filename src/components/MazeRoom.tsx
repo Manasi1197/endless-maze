@@ -77,7 +77,7 @@ const MazeRoom = ({
         )}
         {levelComplete && (
           <div
-            className="flex flex-col items-center justify-center animate-fade-in mt-6"
+            className="flex flex-col items-center justify-center animate-fade-in mt-6 mb-10" // <-- Increased bottom margin
             ref={confettiRef}
           >
             <div className="relative">
