@@ -1,53 +1,21 @@
-import React, { useState, useCallback } from "react";
-import { generateRandomPuzzle, levelThemes } from "../utils/mazeUtils";
 
-type MazeRoom = {
-  id: number;
-  title: string;
-  description: string;
-  puzzle: string;
-  answer: string;
-  theme: string; // NEW: identifies which theme to use
-};
+import { useState, useCallback, useEffect } from "react";
+import { useMazeRooms } from "./useMazeRooms";
+import { isCorrectAnswer, normalizeAnswer } from "../utils/mazeAnswerUtils";
 
+// Types for chat messages
 type ChatMsg = { role: "user" | "guide"; content: string };
 
-const initialRooms: MazeRoom[] = [
-  {
-    id: 1,
-    title: "The Neon Gate",
-    description: "You stand before a shimmering digital portal. Beyond, misty corridors wriggle into darkness. The Guide awaits…",
-    puzzle: `Riddle: “I am not alive, but I can grow; I don't have eyes, but I will show; The more you use me, the bigger I get—what am I?”`,
-    answer: "shadow",
-    theme: "neon"
-  },
-  {
-    id: 2,
-    title: "Chamber of Echoes",
-    description: "Walls pulse with cryptic symbols. Faint hints drift in the air.",
-    puzzle: `Logic puzzle: “Take one out and scratch my head, I am now black but once was red. What am I?”`,
-    answer: "matchstick",
-    theme: "echo"
-  },
-  {
-    id: 3,
-    title: "Hall of Mirrors",
-    description: "You’re surrounded by infinite reflections, but which one is real?",
-    puzzle: `Story choice: “You see two paths reflected. One is shimmering blue, the other is a blur of gold. Which do you choose?”`,
-    answer: "blue,gold", // accepts both
-    theme: "mirror"
-  },
-];
-
-function normalize(s: string) {
-  return s.trim().toLowerCase().replace(/[.?!]/g, "");
-}
-
 export function useMazeGame() {
-  // Each level has 3 steps. Begin with level 1, roomIdx 0.
-  const [level, setLevel] = useState(1);
-  const [roomIdx, setRoomIdx] = useState(0);
-  const [rooms, setRooms] = useState<MazeRoom[]>(initialRooms.slice());
+  // Core room/level/solved state in a separate hook now!
+  const {
+    level, rooms, roomIdx, room,
+    progress, total,
+    roomSolved, markRoomSolved,
+    advanceRoom, levelComplete, advanceLevel,
+  } = useMazeRooms();
+
+  // Chat UI and player state
   const [chat, setChat] = useState<ChatMsg[]>([
     {
       role: "guide",
@@ -60,16 +28,8 @@ export function useMazeGame() {
   const [guideTyping, setGuideTyping] = useState(false);
   const [playerStyle, setPlayerStyle] = useState<null | "playful" | "grumpy" | "clever">(null);
 
-  // NEW: Track when the current room was solved and when the level is completed.
-  const [roomSolved, setRoomSolved] = useState(false);
-  const [levelComplete, setLevelComplete] = useState(false);
-
-  const totalSteps = rooms.length; // always 3 per level
-  const room = rooms[roomIdx];
-
-  // Kick off each new room with a puzzle after the guide welcomes you (debounced)
-  // (reset whenever roomIdx or rooms changes)
-  React.useEffect(() => {
+  // When room/level changes, show its puzzle (reset chat except welcome)
+  useEffect(() => {
     if (
       chat.length === 1 ||
       (chat.length && chat[chat.length-1].content.startsWith("Level"))
@@ -82,22 +42,9 @@ export function useMazeGame() {
         ]);
       }, 800);
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomIdx, rooms, level]);
 
-  /** Called whenever a new level starts. Generates rooms for this level. */
-  function createLevelRooms(nextLevel: number): typeof initialRooms {
-    // Use initial rooms only for level 1.
-    if (nextLevel === 1) return initialRooms.slice();
-    // Procedural: 3 random new rooms themed by level
-    const themeNames = Object.keys(levelThemes);
-    const theme = themeNames[(nextLevel-1)%themeNames.length];
-    return [1,2,3].map((n, idx) =>
-      generateRandomPuzzle((nextLevel-1)*3 + n, theme)
-    );
-  }
-
-  // Refactored: sendMessage only validates answer, does not progress automatically.
   const sendMessage = useCallback(
     async (msg: string) => {
       setChat((prev) => [...prev, { role: "user", content: msg }]);
@@ -106,7 +53,7 @@ export function useMazeGame() {
       setIsLoading(true);
 
       let style: null | "playful" | "grumpy" | "clever" = playerStyle;
-      const msgNorm = normalize(msg);
+      const msgNorm = normalizeAnswer(msg);
 
       if (!style) {
         if (msgNorm.includes("please") || msgNorm.match(/lol|haha|fun/i)) style = "playful";
@@ -115,13 +62,7 @@ export function useMazeGame() {
         if (style) setPlayerStyle(style);
       }
 
-      const answerNorm = normalize(room.answer);
-      let correct = false;
-      if (answerNorm.includes(",")) {
-        correct = answerNorm.split(",").some(ans => msgNorm.includes(ans));
-      } else {
-        correct = msgNorm.includes(answerNorm);
-      }
+      let correct = isCorrectAnswer(msg, room.answer);
 
       setTimeout(() => {
         if (correct && !roomSolved) {
@@ -142,11 +83,7 @@ export function useMazeGame() {
                   : "Click 'Next Room' to go onward!",
             },
           ]);
-          setRoomSolved(true);
-          // If last room, also mark level as complete (shows congrats)
-          if (roomIdx === rooms.length - 1) {
-            setLevelComplete(true);
-          }
+          markRoomSolved();
         } else if (!correct) {
           let res = "";
           if (style === "grumpy") {
@@ -167,38 +104,33 @@ export function useMazeGame() {
         setIsLoading(false);
       }, 1200 + Math.floor(Math.random() * 600));
     },
-    [room, playerStyle, roomIdx, rooms, level, roomSolved]
+    [room, playerStyle, roomIdx, rooms, level, roomSolved, markRoomSolved]
   );
 
-  // NEW: Next room progression
-  const advanceRoom = () => {
-    if (roomIdx < rooms.length - 1) {
-      setRoomIdx(i => i + 1);
+  // On room progression, show a short message
+  useEffect(() => {
+    if (roomIdx > 0 && !levelComplete) {
       setChat([
-        { role: "guide", content: `Stepping into Room ${rooms[roomIdx+1].id}...` }
+        { role: "guide", content: `Stepping into Room ${room.id}...` }
       ]);
     }
-    setRoomSolved(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [roomIdx]);
 
-  // NEW: Next level progression
-  const advanceLevel = () => {
-    const newLevel = level + 1;
-    const newRooms = createLevelRooms(newLevel);
-    setLevel(newLevel);
-    setRooms(newRooms);
-    setRoomIdx(0);
-    setPlayerStyle(null);
-    setLevelComplete(false);
-    setChat([
-      { role: "guide", content: `Welcome to Level ${newLevel}! New mysteries await...` }
-    ]);
-  };
+  // On level progression, welcome again
+  useEffect(() => {
+    if (level > 1 && !levelComplete) {
+      setChat([
+        { role: "guide", content: `Welcome to Level ${level}! New mysteries await...` }
+      ]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level]);
 
   return {
     room,
-    progress: roomIdx + 1,
-    total: rooms.length,
+    progress,
+    total,
     chat,
     userInput,
     setUserInput,
