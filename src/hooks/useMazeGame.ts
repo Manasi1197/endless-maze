@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from "react";
 
 type MazeRoom = {
@@ -144,6 +143,9 @@ export function useMazeGame() {
                 content: "You've reached the heart of the maze! You win! 🎉",
               },
             ]);
+            setTimeout(() => {
+              setProgress((p) => total + 1); // Ensure finished status for UI
+            }, 1200);
           }
         } else {
           // Difficulty/tone response

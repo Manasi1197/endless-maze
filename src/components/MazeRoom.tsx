@@ -11,7 +11,7 @@ const MazeRoom = ({
   total: number;
 }) => {
   return (
-    <div className="flex flex-col h-full items-center justify-center animate-fade-in">
+    <div className="flex flex-col h-full items-center justify-center animate-fade-in scale-95 animate-scale-in">
       <div className="flex items-center mb-8">
         <span className="bg-indigo-900 text-indigo-300 p-3 rounded-full shadow-lg mr-3">
           <Puzzle size={44} />
