@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { generateRandomPuzzle, levelThemes } from "../utils/mazeUtils";
 
@@ -59,11 +58,9 @@ export function useMazeRooms() {
     if (roomIdx < rooms.length - 1) {
       setRoomIdx(i => i + 1);
       setRoomSolved(false);
+      // Removed the logic that sets levelComplete here
     }
-    if (roomIdx === rooms.length - 2) {
-      // Last room will now become active on main hook
-      setLevelComplete(true);
-    }
+    // Do not set levelComplete here anymore
   }
 
   function advanceLevel() {
