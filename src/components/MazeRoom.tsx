@@ -12,7 +12,6 @@ const MazeRoom = ({
   advanceRoom,
   levelComplete,
   advanceLevel,
-  isMobile = false
 }: {
   room: { id: number; title: string; description: string; theme: string };
   progress: number;
@@ -22,7 +21,6 @@ const MazeRoom = ({
   advanceRoom?: () => void;
   levelComplete?: boolean;
   advanceLevel?: () => void;
-  isMobile?: boolean;
 }) => {
   const theme = levelThemes[room.theme] || levelThemes["neon"];
   const confettiRef = useRef<HTMLDivElement>(null);
@@ -44,73 +42,71 @@ const MazeRoom = ({
 
   return (
     <div
-      className={`flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700 px-1.5 sm:px-2 md:px-0`}
+      className={`flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700 px-2 sm:px-0`}
     >
       <div
         className={`absolute inset-0 z-0 bg-gradient-to-br ${theme.gradient} animate-fade-in`}
-        style={{ opacity: 0.93, filter: "blur(1.5px)" }}
+        style={{ opacity: 0.95, filter: "blur(1.5px)" }}
       />
-      <div className="relative z-10 w-full max-w-lg flex flex-col items-center">
-        <div className="flex items-center mb-4 sm:mb-7 mt-1 drop-shadow-lg">
-          <span className={`p-2 sm:p-3 rounded-full mr-1.5 sm:mr-3 border-2 ${theme.accent} bg-white/20 shadow-lg`}>
-            <Puzzle size={27} className="text-indigo-300 sm:size-[34px]" />
+      <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
+        <div className="flex items-center mb-6 sm:mb-8 mt-2 drop-shadow-lg">
+          <span className={`p-3 sm:p-4 rounded-full mr-2 sm:mr-3 border-2 ${theme.accent} bg-white/20 shadow-lg`}>
+            <Puzzle size={34} className="text-indigo-300 sm:size-[44px]" />
           </span>
-          <span className="text-xl sm:text-2xl font-bold text-white/90 tracking-wide drop-shadow-md">
+          <span className="text-2xl sm:text-4xl font-bold text-white/90 tracking-wide drop-shadow-md">
             Level {level}
-            <span className="ml-2 sm:ml-5 text-xs sm:text-lg text-white/60 font-semibold">
+            <span className="ml-4 sm:ml-6 text-base sm:text-xl text-white/60 font-semibold">
               Room {(room.id - 1) % 3 + 1}
             </span>
           </span>
         </div>
-        <div className={`w-full max-w-[97vw] sm:max-w-lg mb-3 sm:mb-7 text-white/80 text-center text-[15px] sm:text-lg font-medium p-2 sm:p-6 rounded-2xl border-2 transition-all duration-500 ${theme.card}`}>
-          <div className="mb-1 text-base sm:text-2xl font-bold tracking-wider text-white mb-1 sm:mb-2 break-words">
+        <div className={`w-full max-w-md sm:max-w-lg mb-6 sm:mb-8 text-white/80 text-center text-base sm:text-lg font-medium p-4 sm:p-7 rounded-2xl border-2 transition-all duration-500 ${theme.card}`}>
+          <div className="mb-1 text-xl sm:text-2xl font-bold tracking-wider text-white mb-2">
             {room.title}
           </div>
-          <div className="break-words">{room.description}</div>
+          {room.description}
         </div>
-        {/* Only show buttons/progress on desktop */}
-        {!isMobile && roomSolved && !levelComplete && (
+        {/* Button logic for progressing */}
+        {roomSolved && !levelComplete && (
           <button
-            className="animate-fade-in mb-2 sm:mb-6 px-4 py-2 sm:px-5 sm:py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl text-sm sm:text-lg font-bold shadow-lg transition-all hover:scale-105"
+            className="animate-fade-in mb-5 sm:mb-6 px-5 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl text-base sm:text-lg font-bold shadow-lg transition-all hover:scale-105"
             onClick={advanceRoom}
           >
             Next Room &rarr;
           </button>
         )}
-        {!isMobile && levelComplete && (
+        {levelComplete && (
           <div
-            className="flex flex-col items-center justify-center animate-fade-in mt-3 mb-6 sm:mb-10"
+            className="flex flex-col items-center justify-center animate-fade-in mt-6 mb-8 sm:mb-10"
             ref={confettiRef}
           >
             <div className="relative">
-              <span className="text-xl sm:text-4xl drop-shadow-glow font-extrabold text-yellow-300 animate-pulse">
+              <span className="text-3xl sm:text-5xl drop-shadow-glow font-extrabold text-yellow-300 animate-pulse">
                 🎉 Congratulations!
               </span>
             </div>
-            <div className="text-base sm:text-xl text-white/80 mt-2 sm:mt-4 font-semibold">
+            <div className="text-lg sm:text-xl text-white/80 mt-4 font-semibold">
               You have completed Level {level}.
             </div>
             <button
-              className="animate-fade-in mt-5 sm:mt-7 px-4 py-2 sm:px-5 sm:py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-xl transition-all hover:scale-105"
+              className="animate-fade-in mt-6 sm:mt-7 px-5 py-2 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-xl transition-all hover:scale-105"
               onClick={advanceLevel}
             >
               Next Level &darr;
             </button>
           </div>
         )}
-        {!isMobile && (
-          <div className="w-full flex flex-col items-center gap-1.5 sm:gap-2 mt-auto">
-            <div className={`w-full max-w-[190px] sm:max-w-[240px] ${theme.accent} rounded-full h-2 sm:h-3 mb-1 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
-              <div
-                className="h-2 sm:h-3 bg-white/60 rounded-full transition-all duration-300"
-                style={{ width: `${(progress / total) * 100}%` }}
-              ></div>
-            </div>
-            <div className="text-indigo-100 text-xs tracking-widest">
-              Progress: Step {progress} of {total}
-            </div>
+        <div className="w-full flex flex-col items-center gap-2 mt-auto">
+          <div className={`w-full max-w-[240px] sm:w-64 ${theme.accent} rounded-full h-3 mb-2 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
+            <div
+              className="h-3 bg-white/60 rounded-full transition-all duration-300"
+              style={{ width: `${(progress / total) * 100}%` }}
+            ></div>
           </div>
-        )}
+          <div className="text-indigo-100 text-xs tracking-widest">
+            Progress: Step {progress} of {total}
+          </div>
+        </div>
       </div>
     </div>
   );
