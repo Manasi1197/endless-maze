@@ -1,6 +1,8 @@
 
 import { Puzzle } from "lucide-react";
+import { ArrowDown } from "lucide-react";
 import { levelThemes } from "../utils/mazeUtils";
+import { Button } from "./ui/button";
 import { useRef, useEffect } from "react";
 
 const MazeRoom = ({
@@ -31,19 +33,17 @@ const MazeRoom = ({
       confettiRef.current.animate(
         [
           { opacity: 0, transform: "scale(0.7)" },
-          { opacity: 1, transform: "scale(1.2)" },
+          { opacity: 1, transform: "scale(1.15) rotate(-2deg)" },
           { opacity: 1, transform: "scale(1)" },
-          { opacity: 0, transform: "scale(0.6)" }
+          { opacity: 0, transform: "scale(0.95)" }
         ],
-        { duration: 2000, easing: "ease-out" }
+        { duration: 1900, easing: "ease-out" }
       );
     }
   }, [levelComplete]);
 
   return (
-    <div
-      className={`flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700`}
-    >
+    <div className="flex flex-col h-full items-center justify-center animate-fade-in transition-all duration-700">
       <div
         className={`absolute inset-0 z-0 bg-gradient-to-br ${theme.gradient} animate-fade-in`}
         style={{ opacity: 0.95, filter: "blur(1.5px)" }}
@@ -77,21 +77,41 @@ const MazeRoom = ({
         )}
         {levelComplete && (
           <div
-            className="flex flex-col items-center justify-center animate-fade-in mt-6"
+            className="flex flex-col items-center justify-center animate-fade-in mt-6 w-full"
             ref={confettiRef}
           >
-            <div className="relative">
-              <span className="text-5xl drop-shadow-glow font-extrabold text-yellow-300 animate-pulse">
-                🎉 Congratulations!
-              </span>
+            <div className="relative w-full max-w-xl rounded-3xl p-7 flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 via-blue-600 to-cyan-400 shadow-2xl border-0">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="text-5xl">🎉</span>
+                <span className="text-5xl font-black tracking-wide pb-1" style={{ color: "#c5b356" }}>
+                  Congratulations!
+                </span>
+              </div>
+              <div className="text-white text-xl font-semibold my-2">
+                You have completed Level {level}.
+              </div>
+              <Button
+                variant="default"
+                className="mt-6 px-10 py-4 text-xl font-extrabold rounded-full bg-fuchsia-500 hover:bg-fuchsia-400 transition-all shadow-2xl drop-shadow-lg focus:outline-none border-0"
+                onClick={advanceLevel}
+                style={{
+                  boxShadow: "0 8px 40px 0 #58e0ff77, 0 1.5px 0 #8780ff",
+                  letterSpacing: '0.03em'
+                }}
+              >
+                Next Level
+                <ArrowDown className="ml-2" size={28} />
+              </Button>
+              <div className="w-full flex flex-col items-center mt-6">
+                <div
+                  className="h-3 rounded-full bg-cyan-200 shadow-lg"
+                  style={{
+                    width: "75%",
+                    boxShadow: "0 0 18px 0 #7de5f7"
+                  }}
+                />
+              </div>
             </div>
-            <div className="text-xl text-white/80 mt-4 font-semibold">You have completed Level {level}.</div>
-            <button
-              className="animate-fade-in mt-7 px-7 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-xl font-bold shadow-xl transition-all hover:scale-105"
-              onClick={advanceLevel}
-            >
-              Next Level &darr;
-            </button>
           </div>
         )}
         <div className="w-full flex flex-col items-center gap-2 mt-auto">
@@ -110,3 +130,4 @@ const MazeRoom = ({
   );
 };
 export default MazeRoom;
+
