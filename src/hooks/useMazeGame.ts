@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useEffect } from "react";
 import { useMazeRooms } from "./useMazeRooms";
 import { isCorrectAnswer, normalizeAnswer } from "../utils/mazeAnswerUtils";
@@ -28,20 +27,17 @@ export function useMazeGame() {
   const [guideTyping, setGuideTyping] = useState(false);
   const [playerStyle, setPlayerStyle] = useState<null | "playful" | "grumpy" | "clever">(null);
 
-  // When room/level changes, show its puzzle (reset chat except welcome)
+  // When room or level changes, always show the appropriate messages
   useEffect(() => {
-    if (
-      chat.length === 1 ||
-      (chat.length && chat[chat.length-1].content.startsWith("Level"))
-    ) {
-      setTimeout(() => {
-        setChat(prev => [
-          ...prev,
-          { role: "guide", content: `Level ${level} - Room ${room.id}` },
-          { role: "guide", content: room.puzzle }
-        ]);
-      }, 800);
-    }
+    // Fresh start or after stepping to a new room: show intro + puzzle
+    if (roomIdx === 0 && level === 1) return; // Only first message on first mount
+    setTimeout(() => {
+      setChat([
+        { role: "guide", content: `Stepping into Room ${room.id}...` },
+        { role: "guide", content: `Level ${level} - Room ${room.id}` },
+        { role: "guide", content: room.puzzle },
+      ]);
+    }, 400);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomIdx, rooms, level]);
 
@@ -107,25 +103,17 @@ export function useMazeGame() {
     [room, playerStyle, roomIdx, rooms, level, roomSolved, markRoomSolved]
   );
 
-  // On room progression, show a short message
+  // On level progression, welcome again (Level > 1 and 1st room)
   useEffect(() => {
-    if (roomIdx > 0 && !levelComplete) {
+    if (level > 1 && roomIdx === 0 && !levelComplete) {
       setChat([
-        { role: "guide", content: `Stepping into Room ${room.id}...` }
+        { role: "guide", content: `Welcome to Level ${level}! New mysteries await...` },
+        { role: "guide", content: `Level ${level} - Room ${room.id}` },
+        { role: "guide", content: room.puzzle },
       ]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roomIdx]);
-
-  // On level progression, welcome again
-  useEffect(() => {
-    if (level > 1 && !levelComplete) {
-      setChat([
-        { role: "guide", content: `Welcome to Level ${level}! New mysteries await...` }
-      ]);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level]);
+  }, [level, roomIdx, room, levelComplete]);
 
   return {
     room,
