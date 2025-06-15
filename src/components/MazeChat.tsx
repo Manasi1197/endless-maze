@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import PuzzleBubble from "./PuzzleBubble";
 import UserBubble from "./UserBubble";
@@ -49,58 +48,58 @@ const MazeChat = ({
     }
   }, [chat, guideTyping]);
 
-  // Compute room number 1/2/3 per level for display
   const roomNumber = room ? ((room.id - 1) % 3 + 1) : undefined;
 
   return (
     <div
       className={cn(
-        "h-full flex flex-col pt-2 sm:pt-8 pb-2 sm:pb-8 px-1 sm:px-6",
-        isMobile && "pb-[84px] min-h-screen" // Reduce bottom pad, be more compact
+        "h-full flex flex-col px-2 sm:px-8 pt-2 sm:pt-8 pb-2 sm:pb-7 transition-all duration-150",
+        isMobile && "pb-[92px] min-h-screen"
       )}
       style={isMobile ? { maxHeight: "100dvh" } : undefined}
     >
-      {/* Chat header */}
+      {/* Chat Header */}
       <div
         className={cn(
-          "flex items-center mb-2 sm:mb-4 select-none",
+          "flex items-center gap-2 sm:gap-4 mb-2 sm:mb-5 select-none",
           isMobile ? "justify-between mb-2" : ""
         )}
       >
-        <span className="bg-indigo-900 text-indigo-300 p-1.5 sm:p-2 rounded-full mr-2 sm:mr-3 shadow-md">
-          <Puzzle size={17} className="sm:size-[28px]" />
+        <span className="bg-indigo-900 text-indigo-300 p-2 rounded-full shadow-lg border border-indigo-700">
+          <Puzzle size={19} className="sm:size-[27px]" />
         </span>
+        {/* Room context on mobile, main header on desktop */}
         {isMobile && level !== undefined && roomNumber !== undefined ? (
-          <span className="font-semibold text-fuchsia-300 text-base sm:text-lg drop-shadow-sm ml-auto">
-            Level {level} - Room {roomNumber}
+          <span className="font-bold text-fuchsia-300 text-base sm:text-lg drop-shadow ml-auto">
+            Level {level} · Room {roomNumber}
           </span>
         ) : (
-          <span className="font-semibold text-indigo-200 text-base sm:text-xl drop-shadow-sm">
+          <span className="font-bold text-indigo-100 text-base sm:text-xl drop-shadow">
             Maze Guide
           </span>
         )}
       </div>
-      {/* Mobile: Room context card at the very top */}
+      {/* Mobile: Room context card at the top */}
       {isMobile && room && (
         <div className="animate-fade-in mb-2 w-full px-1">
-          <div className="bg-indigo-950/85 border border-indigo-800 rounded-xl shadow-md p-3 text-[15px]">
-            <div className="mb-1 text-sm font-semibold text-white/80">
+          <div className="bg-indigo-950/90 border border-indigo-800 rounded-xl shadow p-3 text-[15px] drop-shadow">
+            <div className="mb-1 text-sm font-semibold text-fuchsia-100">
               {room.title}
             </div>
-            <div className="text-xs text-indigo-100/70">
+            <div className="text-xs text-indigo-100/80">
               {room.description}
             </div>
           </div>
         </div>
       )}
-      {/* Messages */}
+      {/* Chat bubble area */}
       <div
         ref={scrollRef}
         className={cn(
-          "flex-1 overflow-y-auto custom-scrollbar pb-1.5 transition-all",
-          "bg-indigo-950/80 rounded-lg p-1.5 sm:p-4 shadow-inner mb-2 sm:mb-3 border border-indigo-800"
+          "flex-1 overflow-y-auto custom-scrollbar pb-2 sm:pb-3 transition-all",
+          "bg-indigo-950/85 rounded-xl p-2 sm:p-5 shadow-inner border border-indigo-800"
         )}
-        style={isMobile ? { minHeight: 0, maxHeight: "calc(100dvh - 200px)" } : { minHeight: 0 }}
+        style={isMobile ? { minHeight: 0, maxHeight: "calc(100dvh - 225px)" } : { minHeight: 0 }}
       >
         {chat.map((msg, idx) =>
           msg.role === "user" ? (
@@ -118,9 +117,9 @@ const MazeChat = ({
           </div>
         )}
       </div>
-      {/* Input */}
+      {/* Chat Input */}
       <form
-        className="flex items-center gap-2 border-t border-indigo-800 pt-2 sm:pt-4 bg-transparent"
+        className="flex items-center gap-2 border-t border-indigo-800 pt-2 sm:pt-4 mt-2 bg-transparent rounded-b-lg"
         onSubmit={e => {
           e.preventDefault();
           if (!userInput.trim()) return;
@@ -129,7 +128,7 @@ const MazeChat = ({
       >
         <input
           className={cn(
-            "w-full bg-indigo-900 text-indigo-100 border border-indigo-700 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition disabled:opacity-60 text-sm sm:text-base",
+            "w-full bg-indigo-900 text-indigo-100 border border-indigo-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition disabled:opacity-60 text-sm sm:text-base shadow-inner",
             isLoading && "opacity-60"
           )}
           type="text"
@@ -150,7 +149,7 @@ const MazeChat = ({
           disabled={isLoading || !userInput.trim()}
           type="submit"
           className={cn(
-            "px-2 py-1.5 sm:px-5 sm:py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg shadow-md transition-all text-xs sm:text-base",
+            "px-3 py-2 sm:px-5 sm:py-2 bg-gradient-to-b from-indigo-500 to-fuchsia-500 hover:from-indigo-400 hover:to-fuchsia-400 text-white font-bold rounded-lg shadow-lg transition-all text-xs sm:text-base",
             (!userInput.trim() || isLoading) && "opacity-70 cursor-not-allowed"
           )}
         >
@@ -162,32 +161,28 @@ const MazeChat = ({
         <div
           className="fixed bottom-0 left-0 w-full flex justify-center items-end z-50 pointer-events-none"
         >
-          <div className={cn(
-            "pointer-events-auto pb-3 w-full flex flex-col items-center",
-          )}>
+          <div className="pointer-events-auto pb-4 w-full flex flex-col items-center gap-2">
             {roomSolved && !levelComplete && (
               <button
-                className="w-[94vw] max-w-xs animate-fade-in px-4 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                className="w-[93vw] max-w-xs animate-fade-in px-4 py-4 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
                 onClick={advanceRoom}
-                style={{ marginBottom: 0 }}
               >
                 Next Room &rarr;
               </button>
             )}
             {levelComplete && (
-              <div className="flex flex-col items-center justify-center animate-fade-in drop-shadow-lg w-[94vw] max-w-xs bg-fuchsia-950/80 p-3 rounded-2xl mb-2 shadow-xl">
+              <div className="flex flex-col items-center justify-center animate-fade-in drop-shadow-lg w-[93vw] max-w-xs bg-fuchsia-950/85 p-4 rounded-2xl mb-1 shadow-xl">
                 <span className="text-lg drop-shadow-glow font-extrabold text-yellow-300 animate-pulse mb-1">
                   🎉 Congratulations!
                 </span>
                 {level !== undefined && (
-                  <span className="text-sm text-white/80 mb-2 font-semibold">
+                  <span className="text-sm text-white/90 mb-2 font-semibold">
                     You completed Level {level}
                   </span>
                 )}
                 <button
-                  className="w-full animate-fade-in px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                  className="w-full animate-fade-in px-4 py-4 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-xl text-base font-bold shadow-2xl transition-all hover:scale-105"
                   onClick={advanceLevel}
-                  style={{ marginBottom: 0 }}
                 >
                   Next Level &darr;
                 </button>
@@ -196,6 +191,7 @@ const MazeChat = ({
           </div>
         </div>
       )}
+      {/* Custom Scrollbar Style */}
       <style>
         {`
           .custom-scrollbar::-webkit-scrollbar { width: 8px; }

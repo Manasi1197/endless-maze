@@ -11,20 +11,20 @@ const MazeGameLayout = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  // Only show chat pane on mobile, both on desktop
   return (
-    <div className="relative min-h-screen w-full grid grid-cols-1 md:grid-cols-2 gap-0 bg-indigo-950">
+    <div className="relative min-h-screen w-full bg-gradient-to-br from-indigo-950 via-indigo-900 to-slate-900 flex flex-col md:grid md:grid-cols-2 scroll-smooth">
       {/* Back to Home button */}
       <button
         type="button"
         onClick={() => navigate("/")}
-        className="absolute top-2 left-2 z-30 bg-indigo-900/90 hover:bg-indigo-950/100 border border-indigo-700 rounded-full flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-indigo-100 shadow-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400 sm:top-3 sm:left-3 sm:px-4 sm:py-2 sm:text-sm"
+        className="absolute top-3 left-3 z-30 bg-indigo-900/90 hover:bg-indigo-950 border border-indigo-700 rounded-full flex items-center gap-2 px-3 py-2 text-xs sm:text-sm font-semibold text-indigo-100 shadow-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400"
       >
         <ArrowLeft className="w-4 h-4 mr-1" />
         Home
       </button>
+      {/* Main game/room panel on desktop */}
       {!isMobile && (
-        <div className="relative flex flex-col justify-between items-stretch p-0 border-b md:border-b-0 md:border-r border-indigo-900 overflow-hidden min-h-[47vh] min-[380px]:min-h-[50vw]">
+        <div className="relative flex flex-col justify-between items-stretch py-6 px-2 sm:px-4 min-h-[47vh] min-[380px]:min-h-[50vw] border-r border-indigo-900 bg-indigo-950/80 shadow-xl">
           <MazeRoom
             room={maze.room}
             progress={maze.progress}
@@ -38,8 +38,8 @@ const MazeGameLayout = () => {
           />
         </div>
       )}
-      <div className={`flex flex-col justify-end h-[53vh] md:h-screen max-h-[58vh] md:max-h-screen p-0 bg-gray-900/90 md:max-h-none ${isMobile ? "" : ""}`}>
-        {/* Pass the current room to MazeChat */}
+      {/* Chat column */}
+      <div className={`relative flex flex-col justify-end w-full h-[53vh] md:h-screen max-h-[58vh] md:max-h-screen px-0 pt-2 pb-0 bg-gray-900/90 md:max-h-none shadow-inner md:shadow-none`}>
         <MazeChat
           chat={maze.chat}
           userInput={maze.userInput}
@@ -56,6 +56,7 @@ const MazeGameLayout = () => {
           room={maze.room}
         />
       </div>
+      {/* Responsive style fix */}
       <style>
         {`
           @media (max-width: 767px) {
@@ -72,3 +73,4 @@ const MazeGameLayout = () => {
   );
 };
 export default MazeGameLayout;
+
