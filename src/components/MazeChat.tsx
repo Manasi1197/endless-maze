@@ -12,6 +12,12 @@ type MazeChatProps = {
   sendMessage: (msg: string) => void;
   isLoading: boolean;
   guideTyping: boolean;
+  isMobile?: boolean;
+  roomSolved?: boolean;
+  advanceRoom?: () => void;
+  levelComplete?: boolean;
+  advanceLevel?: () => void;
+  level?: number;
 };
 
 const MazeChat = ({
@@ -21,6 +27,12 @@ const MazeChat = ({
   sendMessage,
   isLoading,
   guideTyping,
+  isMobile,
+  roomSolved,
+  advanceRoom,
+  levelComplete,
+  advanceLevel,
+  level,
 }: MazeChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -31,9 +43,15 @@ const MazeChat = ({
   }, [chat, guideTyping]);
 
   return (
-    <div className="h-full flex flex-col pt-3 sm:pt-8 pb-3 sm:pb-8 px-1 sm:px-6">
+    <div className={cn(
+      "h-full flex flex-col pt-3 sm:pt-8 pb-3 sm:pb-8 px-1 sm:px-6",
+      isMobile && "pb-[76px] sm:pb-8" // Add space for button if showing
+    )}>
       {/* Chat header */}
-      <div className="flex items-center mb-2 sm:mb-4 select-none">
+      <div className={cn(
+        "flex items-center mb-2 sm:mb-4 select-none",
+        isMobile ? "mb-1" : "mb-2 sm:mb-4"
+      )}>
         <span className="bg-indigo-900 text-indigo-300 p-1.5 sm:p-2 rounded-full mr-1 sm:mr-3 shadow-md">
           <Puzzle size={17} className="sm:size-[28px]" />
         </span>
@@ -105,6 +123,42 @@ const MazeChat = ({
           Send
         </button>
       </form>
+      {/* Mobile progression buttons at the bottom */}
+      {isMobile && (roomSolved || levelComplete) && (
+        <div
+          className="fixed bottom-2 left-0 w-full flex justify-center items-end z-50 pointer-events-none"
+        >
+          <div className={cn(
+            "pointer-events-auto px-2",
+            // animate and spacing mobile
+          )}>
+            {roomSolved && !levelComplete && (
+              <button
+                className="w-full max-w-xs mx-auto animate-fade-in mb-0 px-4 py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                onClick={advanceRoom}
+              >
+                Next Room &rarr;
+              </button>
+            )}
+            {levelComplete && (
+              <div className="flex flex-col items-center justify-center animate-fade-in mt-1 drop-shadow-lg">
+                <span className="text-lg drop-shadow-glow font-extrabold text-yellow-300 animate-pulse mb-1">
+                  🎉 Congratulations!
+                </span>
+                <span className="text-sm text-white/80 mb-2 font-semibold">
+                  You completed Level {level}
+                </span>
+                <button
+                  className="w-full max-w-xs animate-fade-in px-4 py-3 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-2xl text-base font-bold shadow-2xl transition-all hover:scale-105"
+                  onClick={advanceLevel}
+                >
+                  Next Level &darr;
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       <style>
         {`
           .custom-scrollbar::-webkit-scrollbar { width: 8px; }

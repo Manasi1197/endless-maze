@@ -12,6 +12,7 @@ const MazeRoom = ({
   advanceRoom,
   levelComplete,
   advanceLevel,
+  isMobile = false
 }: {
   room: { id: number; title: string; description: string; theme: string };
   progress: number;
@@ -21,6 +22,7 @@ const MazeRoom = ({
   advanceRoom?: () => void;
   levelComplete?: boolean;
   advanceLevel?: () => void;
+  isMobile?: boolean;
 }) => {
   const theme = levelThemes[room.theme] || levelThemes["neon"];
   const confettiRef = useRef<HTMLDivElement>(null);
@@ -66,8 +68,8 @@ const MazeRoom = ({
           </div>
           <div className="break-words">{room.description}</div>
         </div>
-        {/* Button logic for progressing */}
-        {roomSolved && !levelComplete && (
+        {/* Only show buttons/progress on desktop */}
+        {!isMobile && roomSolved && !levelComplete && (
           <button
             className="animate-fade-in mb-2 sm:mb-6 px-4 py-2 sm:px-5 sm:py-3 bg-cyan-500 hover:bg-cyan-400 text-white rounded-xl text-sm sm:text-lg font-bold shadow-lg transition-all hover:scale-105"
             onClick={advanceRoom}
@@ -75,7 +77,7 @@ const MazeRoom = ({
             Next Room &rarr;
           </button>
         )}
-        {levelComplete && (
+        {!isMobile && levelComplete && (
           <div
             className="flex flex-col items-center justify-center animate-fade-in mt-3 mb-6 sm:mb-10"
             ref={confettiRef}
@@ -96,17 +98,19 @@ const MazeRoom = ({
             </button>
           </div>
         )}
-        <div className="w-full flex flex-col items-center gap-1.5 sm:gap-2 mt-auto">
-          <div className={`w-full max-w-[190px] sm:max-w-[240px] ${theme.accent} rounded-full h-2 sm:h-3 mb-1 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
-            <div
-              className="h-2 sm:h-3 bg-white/60 rounded-full transition-all duration-300"
-              style={{ width: `${(progress / total) * 100}%` }}
-            ></div>
+        {!isMobile && (
+          <div className="w-full flex flex-col items-center gap-1.5 sm:gap-2 mt-auto">
+            <div className={`w-full max-w-[190px] sm:max-w-[240px] ${theme.accent} rounded-full h-2 sm:h-3 mb-1 overflow-hidden shadow-outline-lg`} style={{ filter: "brightness(1.1)" }}>
+              <div
+                className="h-2 sm:h-3 bg-white/60 rounded-full transition-all duration-300"
+                style={{ width: `${(progress / total) * 100}%` }}
+              ></div>
+            </div>
+            <div className="text-indigo-100 text-xs tracking-widest">
+              Progress: Step {progress} of {total}
+            </div>
           </div>
-          <div className="text-indigo-100 text-xs tracking-widest">
-            Progress: Step {progress} of {total}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
