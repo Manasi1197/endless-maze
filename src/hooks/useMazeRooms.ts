@@ -32,8 +32,8 @@ const initialRooms: MazeRoom[] = [
     id: 3,
     title: "Hall of Mirrors",
     description: "You’re surrounded by infinite reflections, but which one is real?",
-    puzzle: `Story choice: “You see two paths reflected. One is shimmering blue, the other is a blur of gold. Which do you choose?”`,
-    answer: "blue,gold",
+    puzzle: `Riddle: “What has cities, but no houses; forests, but no trees; and water, but no fish?”`,
+    answer: "map",
     theme: "mirror"
   },
 ];
