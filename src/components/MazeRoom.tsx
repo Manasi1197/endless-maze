@@ -1,10 +1,15 @@
 
-import { useMazeGame } from "../hooks/useMazeGame";
 import { Puzzle } from "lucide-react";
 
-const MazeRoom = () => {
-  const { room, progress, total } = useMazeGame();
-
+const MazeRoom = ({
+  room,
+  progress,
+  total,
+}: {
+  room: { id: number; title: string; description: string };
+  progress: number;
+  total: number;
+}) => {
   return (
     <div className="flex flex-col h-full items-center justify-center animate-fade-in">
       <div className="flex items-center mb-8">

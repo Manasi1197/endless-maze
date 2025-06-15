@@ -1,13 +1,27 @@
 
 import { useEffect, useRef } from "react";
-import { useMazeGame } from "../hooks/useMazeGame";
 import PuzzleBubble from "./PuzzleBubble";
 import UserBubble from "./UserBubble";
 import { Puzzle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const MazeChat = () => {
-  const { chat, userInput, setUserInput, sendMessage, isLoading, guideTyping } = useMazeGame();
+type MazeChatProps = {
+  chat: { role: "user" | "guide"; content: string }[];
+  userInput: string;
+  setUserInput: (val: string) => void;
+  sendMessage: (msg: string) => void;
+  isLoading: boolean;
+  guideTyping: boolean;
+};
+
+const MazeChat = ({
+  chat,
+  userInput,
+  setUserInput,
+  sendMessage,
+  isLoading,
+  guideTyping,
+}: MazeChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -103,4 +117,5 @@ const MazeChat = () => {
     </div>
   );
 };
+
 export default MazeChat;
