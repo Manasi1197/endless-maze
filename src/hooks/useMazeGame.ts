@@ -1,4 +1,5 @@
 
+import React from "react";
 import { useState, useCallback } from "react";
 import { generateRandomPuzzle, levelThemes } from "../utils/mazeUtils";
 
