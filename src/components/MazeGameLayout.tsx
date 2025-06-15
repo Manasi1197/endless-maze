@@ -39,6 +39,7 @@ const MazeGameLayout = () => {
         </div>
       )}
       <div className={`flex flex-col justify-end h-[53vh] md:h-screen max-h-[58vh] md:max-h-screen p-0 bg-gray-900/90 md:max-h-none ${isMobile ? "" : ""}`}>
+        {/* Pass the current room to MazeChat */}
         <MazeChat
           chat={maze.chat}
           userInput={maze.userInput}
@@ -52,7 +53,7 @@ const MazeGameLayout = () => {
           levelComplete={maze.levelComplete}
           advanceLevel={maze.advanceLevel}
           level={maze.level}
-          room={maze.room} {/* <-- Pass the current room */}
+          room={maze.room}
         />
       </div>
       <style>
