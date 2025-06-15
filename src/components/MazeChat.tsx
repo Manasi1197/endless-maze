@@ -18,6 +18,12 @@ type MazeChatProps = {
   levelComplete?: boolean;
   advanceLevel?: () => void;
   level?: number;
+  room?: {
+    id: number;
+    title: string;
+    description: string;
+    theme: string;
+  };
 };
 
 const MazeChat = ({
@@ -33,6 +39,7 @@ const MazeChat = ({
   levelComplete,
   advanceLevel,
   level,
+  room,
 }: MazeChatProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -42,22 +49,30 @@ const MazeChat = ({
     }
   }, [chat, guideTyping]);
 
+  // Compute room number 1/2/3 per level for display
+  const roomNumber = room ? ((room.id - 1) % 3 + 1) : undefined;
+
   return (
-    <div className={cn(
-      "h-full flex flex-col pt-3 sm:pt-8 pb-3 sm:pb-8 px-1 sm:px-6",
-      isMobile && "pb-[94px] sm:pb-8" // Extra for button
-    )}>
+    <div
+      className={cn(
+        "h-full flex flex-col pt-2 sm:pt-8 pb-2 sm:pb-8 px-1 sm:px-6",
+        isMobile && "pb-[84px] min-h-screen" // Reduce bottom pad, be more compact
+      )}
+      style={isMobile ? { maxHeight: "100dvh" } : undefined}
+    >
       {/* Chat header */}
-      <div className={cn(
-        "flex items-center mb-2 sm:mb-4 select-none",
-        isMobile ? "justify-between mb-3" : ""
-      )}>
+      <div
+        className={cn(
+          "flex items-center mb-2 sm:mb-4 select-none",
+          isMobile ? "justify-between mb-2" : ""
+        )}
+      >
         <span className="bg-indigo-900 text-indigo-300 p-1.5 sm:p-2 rounded-full mr-2 sm:mr-3 shadow-md">
           <Puzzle size={17} className="sm:size-[28px]" />
         </span>
-        {isMobile && level !== undefined ? (
+        {isMobile && level !== undefined && roomNumber !== undefined ? (
           <span className="font-semibold text-fuchsia-300 text-base sm:text-lg drop-shadow-sm ml-auto">
-            Level {level}
+            Level {level} - Room {roomNumber}
           </span>
         ) : (
           <span className="font-semibold text-indigo-200 text-base sm:text-xl drop-shadow-sm">
@@ -65,6 +80,19 @@ const MazeChat = ({
           </span>
         )}
       </div>
+      {/* Mobile: Room context card at the very top */}
+      {isMobile && room && (
+        <div className="animate-fade-in mb-2 w-full px-1">
+          <div className="bg-indigo-950/85 border border-indigo-800 rounded-xl shadow-md p-3 text-[15px]">
+            <div className="mb-1 text-sm font-semibold text-white/80">
+              {room.title}
+            </div>
+            <div className="text-xs text-indigo-100/70">
+              {room.description}
+            </div>
+          </div>
+        </div>
+      )}
       {/* Messages */}
       <div
         ref={scrollRef}
@@ -72,7 +100,7 @@ const MazeChat = ({
           "flex-1 overflow-y-auto custom-scrollbar pb-1.5 transition-all",
           "bg-indigo-950/80 rounded-lg p-1.5 sm:p-4 shadow-inner mb-2 sm:mb-3 border border-indigo-800"
         )}
-        style={{ minHeight: 0 }}
+        style={isMobile ? { minHeight: 0, maxHeight: "calc(100dvh - 200px)" } : { minHeight: 0 }}
       >
         {chat.map((msg, idx) =>
           msg.role === "user" ? (
@@ -92,7 +120,7 @@ const MazeChat = ({
       </div>
       {/* Input */}
       <form
-        className="flex items-center gap-2 border-t border-indigo-800 pt-2 sm:pt-4"
+        className="flex items-center gap-2 border-t border-indigo-800 pt-2 sm:pt-4 bg-transparent"
         onSubmit={e => {
           e.preventDefault();
           if (!userInput.trim()) return;

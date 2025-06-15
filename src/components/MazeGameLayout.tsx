@@ -46,13 +46,13 @@ const MazeGameLayout = () => {
           sendMessage={maze.sendMessage}
           isLoading={maze.isLoading}
           guideTyping={maze.guideTyping}
-          // NEW: handoff props for mobile progression
           isMobile={isMobile}
           roomSolved={maze.roomSolved}
           advanceRoom={maze.advanceRoom}
           levelComplete={maze.levelComplete}
           advanceLevel={maze.advanceLevel}
           level={maze.level}
+          room={maze.room} {/* <-- Pass the current room */}
         />
       </div>
       <style>
